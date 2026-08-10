@@ -1,0 +1,16 @@
+<!doctype html><html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RGR Result</title><link rel="stylesheet" href="/static/style.css"></head>
+<body><div class="shell"><aside class="side"><div class="brand"><div class="logo">R</div><div><b>RGR</b><small>GST RECON</small></div></div><nav><a class="active">Results</a><a href="/">New Reconciliation</a></nav></aside>
+<main><header><div><span class="eyebrow">RGR ANALYTICS</span><h1>Reconciliation <span>Result</span></h1><p>हर unmatched party की पूरी जानकारी और match न होने का कारण यहाँ देखें.</p></div><a class="export" href="/export/{{rid}}">↓ Export Excel</a></header>
+<section class="cards">
+<div class="metric good"><span>MATCHED</span><b>{{result.matched|length}}</b><small>₹1 तक difference allowed</small></div>
+<div class="metric warn"><span>MISMATCH</span><b>{{result.mismatch|length}}</b><small>राशि में अंतर</small></div>
+<div class="metric bad"><span>NOT IN 2B</span><b>{{result.not_2b|length}}</b><small>Books में है</small></div>
+<div class="metric purple"><span>NOT IN BOOKS</span><b>{{result.not_books|length}}</b><small>2B में है</small></div>
+</section>
+<section class="panel"><div class="panel-head"><div><h2>❌ Match नहीं हुई Entries</h2><p>जिस party में जो field अलग है, उसका कारण हिंदी में दिया गया है.</p></div><a class="smallbtn" href="/export/{{rid}}">Download Excel</a></div>
+<div class="tablewrap"><table><thead><tr><th>स्थिति</th><th>पार्टी नाम</th><th>GSTIN</th><th>Bill No</th><th>क्यों मैच नहीं हुआ</th><th>Books Bill Amount</th><th>2B Bill Amount</th><th>Taxable Diff</th><th>IGST Diff</th><th>CGST Diff</th><th>SGST Diff</th></tr></thead><tbody>
+{% for x in result.mismatch %}<tr><td><span class="pill p-warn">राशि मैच नहीं हुई</span></td><td>{{x.book.party or x.gstr.party}}</td><td>{{x.book.gstin}}</td><td>{{x.book.invoice}}</td><td class="reason">{{x.reason}}</td><td>{{x.book.bill_amount}}</td><td>{{x.gstr.bill_amount}}</td><td>{{x.diff.taxable}}</td><td>{{x.diff.igst}}</td><td>{{x.diff.cgst}}</td><td>{{x.diff.sgst}}</td></tr>{% endfor %}
+{% for x in result.not_2b %}<tr><td><span class="pill p-red">2B में नहीं</span></td><td>{{x.party}}</td><td>{{x.gstin}}</td><td>{{x.invoice}}</td><td class="reason">Books में है, लेकिन GSTR-2B में यह Bill नहीं मिला</td><td>{{x.bill_amount}}</td><td>—</td><td>{{x.taxable}}</td><td>{{x.igst}}</td><td>{{x.cgst}}</td><td>{{x.sgst}}</td></tr>{% endfor %}
+{% for x in result.not_books %}<tr><td><span class="pill p-purple">Books में नहीं</span></td><td>{{x.party}}</td><td>{{x.gstin}}</td><td>{{x.invoice}}</td><td class="reason">GSTR-2B में है, लेकिन Books में यह Bill नहीं मिला</td><td>—</td><td>{{x.bill_amount}}</td><td>{{x.taxable}}</td><td>{{x.igst}}</td><td>{{x.cgst}}</td><td>{{x.sgst}}</td></tr>{% endfor %}
+{% if not result.mismatch and not result.not_2b and not result.not_books %}<tr><td colspan="11" class="empty">🎉 सभी entries match हो गईं.</td></tr>{% endif %}
+</tbody></table></div></section></main></div></body></html>

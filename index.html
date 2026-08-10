@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RGR GST Reconciliation</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="side">
+    <div class="brand"><div class="logo">R</div><div><b>RGR</b><small>GST RECON</small></div></div>
+    <nav><a class="active">Dashboard</a><a>Reconciliation</a><a>Reports</a></nav>
+    <div class="side-note">Smart matching<br>• GSTIN + Invoice<br>• ₹1 tolerance</div>
+  </aside>
+  <main>
+    <header><div><span class="eyebrow">GST CONTROL CENTER</span><h1>Reconciliation <span>Dashboard</span></h1><p>Books और GSTR-2B को एक जगह intelligently match करें.</p></div><div class="badge">RGR • WEB APP</div></header>
+    {% with messages=get_flashed_messages() %}{% if messages %}<div class="alert">{{messages[0]}}</div>{% endif %}{% endwith %}
+    <section class="hero">
+      <div><div class="hero-kicker">START A NEW RECONCILIATION</div><h2>अपनी दो files upload करें</h2><p>Column order अलग हो तो भी RGR common GST fields पहचानने की कोशिश करेगा.</p></div>
+      <div class="mini-stats"><div><b>₹1</b><span>Difference tolerance</span></div><div><b>5+</b><span>Match fields</span></div></div>
+    </section>
+    <section class="heading-note">
+      <div class="note-title">⚠️ IMPORTANT NOTE</div>
+      <p>Excel में <b>exactly नीचे दी गई headings</b> होनी चाहिए, वरना reconciliation में error आ सकती है। Books और GSTR-2B दोनों files के लिए यही format रखें.</p>
+      <div class="heading-copy-row">
+        <code id="requiredHeadings">GSTIN | BILL NO | BILL AMOUNT | TAXABLE AMOUNT | IGST | CGST | SGST</code>
+        <button type="button" onclick="copyHeadings()">📋 COPY HEADINGS</button>
+      </div>
+      <span id="copyMsg"></span>
+    </section>
+    <form action="/reconcile" method="post" enctype="multipart/form-data" class="upload-grid">
+      <label class="upload-card"><span class="upload-icon">01</span><h3>Books Data</h3><p>Purchase / accounting Excel</p><input type="file" name="books" accept=".xlsx,.xlsm" required><span class="choose">Choose Excel</span></label>
+      <label class="upload-card"><span class="upload-icon">02</span><h3>GSTR-2B</h3><p>Portal downloaded Excel</p><input type="file" name="gstr2b" accept=".xlsx,.xlsm" required><span class="choose">Choose Excel</span></label>
+      <button class="run" type="submit">⚡ RUN RECONCILIATION</button>
+    </form>
+    <section class="feature-row">
+      <div><b>✓ Smart Match</b><span>GSTIN + Invoice based</span></div><div><b>✓ Difference Check</b><span>Taxable + GST heads</span></div><div><b>✓ Excel Report</b><span>One-click download</span></div><div><b>✓ RC Tracking</b><span>Reverse charge entries</span></div>
+    </section>
+  </main>
+</div>
+<script>
+function copyHeadings(){
+ const text=document.getElementById("requiredHeadings").innerText;
+ navigator.clipboard.writeText(text).then(()=>{
+   document.getElementById("copyMsg").innerText="✓ Headings copied! अब Excel की first row में Paste कर दें.";
+ });
+}
+</script></body></html>
